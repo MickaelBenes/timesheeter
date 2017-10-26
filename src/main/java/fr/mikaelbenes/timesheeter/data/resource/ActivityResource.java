@@ -1,12 +1,12 @@
 package fr.mikaelbenes.timesheeter.data.resource;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import fr.mikaelbenes.timesheeter.controller.ActivityRestController;
 import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import lombok.Getter;
 import org.springframework.hateoas.ResourceSupport;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 public class ActivityResource extends ResourceSupport {
 
@@ -18,9 +18,9 @@ public class ActivityResource extends ResourceSupport {
 
 		this.add( linkTo(ActivityRestController.class).withRel("activities") );
 		this.add(
-				linkTo(
-					methodOn( ActivityRestController.class ).getActivity( this.activity.getId() )
-				).withSelfRel()
+			linkTo(
+				methodOn( ActivityRestController.class ).getActivity( this.activity.getId() )
+			).withSelfRel()
 		);
 	}
 

@@ -1,5 +1,9 @@
 server:
   port: 50000
-spring:
-  datasource:
-    url: jdbc:h2~/test;DB_CLOSE_ON_EXIT=FALSE
+security:
+  user:
+    password: pass
+#spring:
+#  datasource:
+#    url: jdbc:h2~/test;DB_CLOSE_ON_EXIT=FALSE
+

@@ -4,9 +4,8 @@ import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
-public interface ActivityRepository extends JpaRepository<Activity, String> {
+public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
 	Collection<Activity> findByActivityTicket( String activityTicket );
 

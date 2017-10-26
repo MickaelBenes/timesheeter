@@ -3,6 +3,8 @@ package fr.mikaelbenes.timesheeter.controller;
 import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import fr.mikaelbenes.timesheeter.data.repository.ActivityRepository;
 import fr.mikaelbenes.timesheeter.data.resource.ActivityResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping( "/activities" )
 public class ActivityRestController {
+
+	private final static Logger log = LoggerFactory.getLogger( ActivityRestController.class );
 
 	private final ActivityRepository activityRepository;
 
@@ -35,18 +39,48 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( method = RequestMethod.GET, value = "/{id}" )
-	public ActivityResource getActivity( @PathVariable String id ) {
+	public ActivityResource getActivity( @PathVariable Long id ) {
 		Activity activity = this.activityRepository.findOne( id );
 
 		return new ActivityResource( activity );
 	}
 
 	@RequestMapping( method = RequestMethod.POST )
-	ResponseEntity<?> addActivity( @RequestBody Activity activity ) {
-		Activity newActivity	= this.activityRepository.save( new Activity(activity.getTitle()) );
+	ResponseEntity<?> startActivity( @RequestBody Activity input ) {
+		input.start();
+		Activity newActivity	= this.activityRepository.save( input );
 		Link forOneActivity		= new ActivityResource( newActivity ).getLink( "self" );
 
+		log.info( "Successfully created activity. ID : {}", newActivity.getId() );
+
 		return ResponseEntity.created( URI.create(forOneActivity.getHref()) ).build();
+	}
+
+	@RequestMapping( path = "startFrom/{id}", method = RequestMethod.POST )
+	ResponseEntity<?> startFromActivity( @PathVariable Long id ) {
+		Activity fromActivity	= this.activityRepository.findOne( id );
+		Activity newActivity	= new Activity( fromActivity.getTitle() );
+
+		newActivity.setActivityType( fromActivity.getActivityType() );
+		newActivity.setActivityTicket( fromActivity.getActivityTicket() );
+
+		newActivity			= this.activityRepository.save( newActivity );
+		Link forOneActivity	= new ActivityResource( newActivity ).getLink( "self" );
+
+		log.info( "Successfully created activity from existent activity. ID : {}", newActivity.getId() );
+
+		return ResponseEntity.created( URI.create(forOneActivity.getHref()) ).build();
+	}
+
+	@RequestMapping( path = "/{id}/stop", method = RequestMethod.POST )
+	ActivityResource stopActivity( @PathVariable Long id ) {
+		Activity activity	= this.activityRepository.findOne( id );
+		activity.stop();
+		this.activityRepository.save( activity );
+
+		log.info( "Successfully stopped activity." );
+
+		return new ActivityResource( activity );
 	}
 
 }
