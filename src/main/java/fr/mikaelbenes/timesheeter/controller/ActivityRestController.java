@@ -83,4 +83,13 @@ public class ActivityRestController {
 		return new ActivityResource( activity );
 	}
 
+	@RequestMapping( path = "/{id}", method = RequestMethod.DELETE )
+	ResponseEntity<?> deleteActivity( @PathVariable Long id ) {
+		this.activityRepository.delete( id );
+
+		log.info( "Successfully deleted activity." );
+
+		return ResponseEntity.noContent().build();
+	}
+
 }
