@@ -67,7 +67,7 @@ public class ActivityRestController {
 		newActivity			= this.activityRepository.save( newActivity );
 		Link forOneActivity	= new ActivityResource( newActivity ).getLink( "self" );
 
-		log.info( "Successfully created activity from existent activity. ID : {}", newActivity.getId() );
+		log.info( "Successfully created activity from existing activity. ID : {}", newActivity.getId() );
 
 		return ResponseEntity.created( URI.create(forOneActivity.getHref()) ).build();
 	}
