@@ -1,5 +1,13 @@
 {
-	"title": "Fix on the Batman protocole.",
-	"activityType": "Redmine",
-	"activityTicket": "1"
+	"dummies": [
+		{
+			"title": "Fix on the Batman protocole.",
+			"activityType": "Redmine",
+			"activityTicket": "1"
+		},{
+			"title": "Fix on the Robin protocole.",
+			"activityType": "Redmine",
+			"activityTicket": "2"
+		}
+	]
 }
