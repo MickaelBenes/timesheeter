@@ -33,49 +33,43 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( method = RequestMethod.GET, value = "/{id}" )
-	public ActivityResource getActivity( @PathVariable Long id ) {
-		Activity activity = this.activityRepository.findOne( id );
-
-		return new ActivityResource( activity );
+	public Activity getActivity( @PathVariable Long id ) {
+		return this.activityRepository.findOne( id );
 	}
 
 	@RequestMapping( method = RequestMethod.POST )
-	public ResponseEntity<ActivityResource> startActivity( @RequestBody Activity input ) {
+	public ResponseEntity<Activity> startActivity( @RequestBody Activity input ) {
 		input.start();
 		Activity newActivity	= this.activityRepository.save( input );
-		ActivityResource res	= new ActivityResource( newActivity );
 
 		log.info( "Successfully created activity. ID : {}", newActivity.getId() );
 
-		return new ResponseEntity<>( res, HttpStatus.CREATED );
+		return new ResponseEntity<>( newActivity, HttpStatus.CREATED );
 	}
 
 	@RequestMapping( path = "startFrom/{id}", method = RequestMethod.POST )
-	public ResponseEntity<ActivityResource> startFromActivity( @PathVariable Long id ) {
+	public ResponseEntity<Activity> startFromActivity( @PathVariable Long id ) {
 		Activity fromActivity	= this.activityRepository.findOne( id );
 		Activity newActivity	= new Activity( fromActivity.getTitle() );
 
 		newActivity.setActivityType( fromActivity.getActivityType() );
 		newActivity.setActivityTicket( fromActivity.getActivityTicket() );
 
-		newActivity				= this.activityRepository.save( newActivity );
-		ActivityResource res	= new ActivityResource( newActivity );
-		Link forOneActivity		= res.getLink( "self" );
+		newActivity	= this.activityRepository.save( newActivity );
 
 		log.info( "Successfully created activity from existing activity. ID : {}", newActivity.getId() );
 
-		return new ResponseEntity<>( res, HttpStatus.CREATED );
+		return new ResponseEntity<>( newActivity, HttpStatus.CREATED );
 	}
 
 	@RequestMapping( path = "/{id}/stop", method = RequestMethod.POST )
-	public ActivityResource stopActivity( @PathVariable Long id ) {
+	public Activity stopActivity( @PathVariable Long id ) {
 		Activity activity	= this.activityRepository.findOne( id );
 		activity.stop();
-		this.activityRepository.save( activity );
 
 		log.info( "Successfully stopped activity." );
 
-		return new ActivityResource( activity );
+		return this.activityRepository.save( activity );
 	}
 
 	@RequestMapping( path = "/{id}", method = RequestMethod.DELETE )
