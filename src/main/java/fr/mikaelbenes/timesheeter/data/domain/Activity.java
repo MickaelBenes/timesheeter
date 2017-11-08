@@ -31,7 +31,6 @@ public class Activity {
 	@Getter @Setter
 	private LocalDateTime startTime;
 
-	@JsonIgnore
 	@Getter @Setter
 	private LocalDateTime stopTime;
 
