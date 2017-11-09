@@ -48,7 +48,6 @@ public class TimesheeterApplication {
 
 				// this origin value could just as easily have come from a database
 				response.setHeader( "Access-Control-Allow-Origin", origin );
-//				response.setHeader( "Access-Control-Allow-Origin", "*" );
 				response.setHeader( "Access-Control-Allow-Credentials", "true" );
 				response.setHeader( "Access-Control-Allow-Methods", "POST,PUT,PATCH,GET,OPTIONS,DELETE" );
 				response.setHeader( "Access-Control-Max-Age", Long.toString(60 * 60) );

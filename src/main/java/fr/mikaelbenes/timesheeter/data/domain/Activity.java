@@ -1,6 +1,5 @@
 package fr.mikaelbenes.timesheeter.data.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.mikaelbenes.timesheeter.utils.TimerUtils;
 import lombok.Getter;
 import lombok.Setter;
