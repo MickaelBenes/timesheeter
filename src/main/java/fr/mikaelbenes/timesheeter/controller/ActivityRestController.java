@@ -69,6 +69,25 @@ public class ActivityRestController {
 		return this.activityRepository.save( activity );
 	}
 
+	@RequestMapping( path = "/{id}", method = RequestMethod.PATCH )
+	public Activity updateActivity( @PathVariable Long id, @RequestBody Activity input ) {
+		Activity activity = this.activityRepository.findOne( id );
+
+		if ( !activity.getTitle().equals(input.getTitle()) ) {
+			activity.setTitle( input.getTitle() );
+		}
+
+		if ( !activity.getActivityType().equals(input.getActivityType()) ) {
+			activity.setActivityType( input.getActivityType() );
+		}
+
+		if ( !activity.getActivityTicket().equals(input.getActivityTicket()) ) {
+			activity.setActivityTicket( input.getActivityTicket() );
+		}
+
+		return this.activityRepository.save( activity );
+	}
+
 	@RequestMapping( path = "/{id}", method = RequestMethod.DELETE )
 	public ResponseEntity<?> deleteActivity( @PathVariable Long id ) {
 		this.activityRepository.delete( id );
