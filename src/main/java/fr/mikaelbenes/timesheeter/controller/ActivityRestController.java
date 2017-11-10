@@ -35,7 +35,7 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( method = RequestMethod.POST )
-	public ResponseEntity<Activity> startActivity( @RequestBody Activity input ) {
+	public ResponseEntity<Activity> createActivity( @RequestBody Activity input ) {
 		input.start();
 		Activity newActivity	= this.activityRepository.save( input );
 
@@ -45,7 +45,7 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( path = "startFrom/{id}", method = RequestMethod.POST )
-	public ResponseEntity<Activity> startFromActivity( @PathVariable Long id ) {
+	public ResponseEntity<Activity> duplicateActivity( @PathVariable Long id ) {
 		Activity fromActivity	= this.activityRepository.findOne( id );
 		Activity newActivity	= new Activity( fromActivity.getTitle() );
 
