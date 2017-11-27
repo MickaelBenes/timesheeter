@@ -15,7 +15,7 @@ public class Activity {
 
 	@Id
 	@GeneratedValue
-	@Getter @Setter
+	@Getter
 	private Long id;
 
 	@Getter @Setter
