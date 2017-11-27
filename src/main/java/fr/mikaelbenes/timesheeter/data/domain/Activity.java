@@ -15,7 +15,7 @@ public class Activity {
 
 	@Id
 	@GeneratedValue
-	@Getter
+	@Getter @Setter
 	private Long id;
 
 	@Getter @Setter
@@ -36,7 +36,24 @@ public class Activity {
 	public Activity() {}
 
 	public Activity( String title ) {
-		this.title	= title;
+		this.title			= title;
+		this.activityType	= null;
+		this.activityTicket	= null;
+
+		this.start();
+	}
+
+	/**
+	 * Full constructor to facilitate unit testing.
+	 *
+	 * @param	title			activity title
+	 * @param	activityType	activity type (Redmine...)
+	 * @param	activityTicket	activity ticket number
+	 */
+	public Activity( String title, String activityType, String activityTicket ) {
+		this.title			= title;
+		this.activityType	= activityType;
+		this.activityTicket	= activityTicket;
 
 		this.start();
 	}
