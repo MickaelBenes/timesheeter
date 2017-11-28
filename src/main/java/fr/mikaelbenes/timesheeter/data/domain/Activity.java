@@ -63,7 +63,7 @@ public class Activity {
 	}
 
 	public void stop() {
-		if ( !Objects.isNull(this.stopTime) ) {
+		if ( Objects.isNull(this.stopTime) ) {
 			this.stopTime = LocalDateTime.now();
 		}
 	}
