@@ -63,7 +63,9 @@ public class Activity {
 	}
 
 	public void stop() {
-		this.stopTime = LocalDateTime.now();
+		if ( !Objects.isNull(this.stopTime) ) {
+			this.stopTime = LocalDateTime.now();
+		}
 	}
 
 	public String getDuration() {
