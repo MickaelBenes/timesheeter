@@ -13,13 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -40,6 +42,7 @@ public class ActivityRestControllerTest {
 	private static final Activity activityTest1 	= new Activity( "Test 1", "Redmine", "1234" );
 	private static final Activity activityTest2 	= new Activity( "Test 2" );
 	private static final Activity activityTest3		= new Activity( "Test 3", "Redmine", "12345" );
+	private static final Activity activityTest4		= new Activity( "Test 4", "Redmine", "123" );
 
 	private MediaType contentType = new MediaType(
 			MediaType.APPLICATION_JSON.getType(),
@@ -73,13 +76,13 @@ public class ActivityRestControllerTest {
 		this.mockMvc = webAppContextSetup( webApplicationContext ).build();
 
 		this.activityRepo.deleteAllInBatch();
+		this.activities.clear();
 
 		activityTest3.stop();
 		Activity activityTest1 = this.activityRepo.save( this.activityTest1 );
 		Activity activityTest2 = this.activityRepo.save( this.activityTest2 );
 		Activity activityTest3 = this.activityRepo.save( this.activityTest3 );
 
-		this.activities.clear();
 		this.activities.add( activityTest1 );
 		this.activities.add( activityTest2 );
 		this.activities.add( activityTest3 );
@@ -126,28 +129,39 @@ public class ActivityRestControllerTest {
 				.andExpect( jsonPath("$.activityType", is(this.activities.get(0).getActivityType())) )
 				.andExpect( jsonPath("$.activityTicket", is(this.activities.get(0).getActivityTicket())) )
 				.andExpect( jsonPath("$.startTime", notNullValue()) )
-				.andExpect( jsonPath("$.stopTime", isEmptyOrNullString()) )
+				.andExpect( jsonPath("$.stopTime", nullValue()) )
 				.andExpect( jsonPath("$.duration", isEmptyString()) );
 	}
 
 	@Test
 	public void createActivity() throws Exception {
+		String activityJson = this.json( this.activityTest4 );
+
+		this.mockMvc.perform(
+				post( ENDPOINT_PATH )
+				.contentType( this.contentType )
+				.content( activityJson )
+		)
+				.andExpect( status().isCreated() );
 	}
 
 	@Test
-	public void duplicateActivity() throws Exception {
-	}
+	public void duplicateActivity() throws Exception {}
 
 	@Test
-	public void stopActivity() throws Exception {
-	}
+	public void stopActivity() throws Exception {}
 
 	@Test
-	public void updateActivity() throws Exception {
-	}
+	public void updateActivity() throws Exception {}
 
 	@Test
-	public void deleteActivity() throws Exception {
+	public void deleteActivity() throws Exception {}
+
+	protected String json( Object o ) throws IOException {
+		MockHttpOutputMessage outputMessage = new MockHttpOutputMessage();
+		this.mappingJackson2HttpMessageConverter.write( o, MediaType.APPLICATION_JSON, outputMessage );
+
+		return outputMessage.getBodyAsString();
 	}
 
 }
