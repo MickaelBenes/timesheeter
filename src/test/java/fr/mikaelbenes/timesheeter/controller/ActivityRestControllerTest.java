@@ -27,8 +27,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -146,16 +145,58 @@ public class ActivityRestControllerTest {
 	}
 
 	@Test
-	public void duplicateActivity() throws Exception {}
+	public void duplicateActivity() throws Exception {
+		this.mockMvc.perform( post(ENDPOINT_PATH + "/startFrom/" + this.activities.get(0).getId()) )
+				.andExpect( status().isCreated() )
+				.andExpect( content().contentType(this.contentType) )
+				.andExpect( jsonPath("$.id", notNullValue()) )
+				.andExpect( jsonPath("$.title", is(this.activities.get(0).getTitle())) )
+				.andExpect( jsonPath("$.activityType", is(this.activities.get(0).getActivityType())) )
+				.andExpect( jsonPath("$.activityTicket", is(this.activities.get(0).getActivityTicket())) )
+				.andExpect( jsonPath("$.startTime", notNullValue()) )
+				.andExpect( jsonPath("$.stopTime", nullValue()) )
+				.andExpect( jsonPath("$.duration", isEmptyString()) );
+	}
 
 	@Test
-	public void stopActivity() throws Exception {}
+	public void stopActivity() throws Exception {
+		this.mockMvc.perform( post(ENDPOINT_PATH + "/" + this.activities.get(0).getId() + "/stop") )
+				.andExpect( status().isOk() )
+				.andExpect( content().contentType(this.contentType) )
+				.andExpect( jsonPath("$.id", is(this.activities.get(0).getId().intValue())) )
+				.andExpect( jsonPath("$.title", is(this.activities.get(0).getTitle())) )
+				.andExpect( jsonPath("$.activityType", is(this.activities.get(0).getActivityType())) )
+				.andExpect( jsonPath("$.activityTicket", is(this.activities.get(0).getActivityTicket())) )
+				.andExpect( jsonPath("$.startTime", notNullValue()) )
+				.andExpect( jsonPath("$.stopTime", notNullValue()) )
+				.andExpect( jsonPath("$.duration", notNullValue()) );
+	}
 
 	@Test
-	public void updateActivity() throws Exception {}
+	public void updateActivity() throws Exception {
+		String activityJson = this.json( this.activityTest4 );
+
+		this.mockMvc.perform(
+				patch( ENDPOINT_PATH + "/" + this.activities.get(0).getId() )
+						.contentType( this.contentType )
+						.content( activityJson )
+		)
+				.andExpect( status().isOk() )
+				.andExpect( content().contentType(this.contentType) )
+				.andExpect( jsonPath("$.id", is(this.activities.get(0).getId().intValue())) )
+				.andExpect( jsonPath("$.title", is(this.activityTest4.getTitle())) )
+				.andExpect( jsonPath("$.activityType", is(this.activityTest4.getActivityType())) )
+				.andExpect( jsonPath("$.activityTicket", is(this.activityTest4.getActivityTicket())) )
+				.andExpect( jsonPath("$.startTime", notNullValue()) )
+				.andExpect( jsonPath("$.stopTime", nullValue()) )
+				.andExpect( jsonPath("$.duration", isEmptyString()) );
+	}
 
 	@Test
-	public void deleteActivity() throws Exception {}
+	public void deleteActivity() throws Exception {
+		this.mockMvc.perform( delete(ENDPOINT_PATH + "/" + this.activities.get(0).getId()) )
+				.andExpect( status().isNoContent() );
+	}
 
 	protected String json( Object o ) throws IOException {
 		MockHttpOutputMessage outputMessage = new MockHttpOutputMessage();
