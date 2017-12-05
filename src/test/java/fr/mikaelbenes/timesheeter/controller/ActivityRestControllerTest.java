@@ -121,7 +121,7 @@ public class ActivityRestControllerTest {
 	@Test
 	public void getActivity() throws Exception {
 		this.mockMvc.perform( get(ENDPOINT_PATH + "/" + this.activities.get(0).getId()) )
-				.andExpect( status().isOk() )
+				.andExpect( status().isFound() )
 				.andExpect( content().contentType(this.contentType) )
 				.andExpect( jsonPath("$.id", is(this.activities.get(0).getId().intValue())) )
 				.andExpect( jsonPath("$.title", is(this.activities.get(0).getTitle())) )

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping( "/activities" )
@@ -30,8 +31,14 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( method = RequestMethod.GET, value = "/{id}" )
-	public Activity getActivity( @PathVariable Long id ) {
-		return this.activityRepository.findOne( id );
+	public ResponseEntity<Activity> getActivity( @PathVariable Long id ) {
+		Optional<Activity> actOptional = this.activityRepository.findOne( id );
+
+		if ( actOptional.isPresent() ) {
+			return new ResponseEntity<>( actOptional.get(), HttpStatus.FOUND );
+		}
+
+		return ResponseEntity.noContent().build();
 	}
 
 	@RequestMapping( method = RequestMethod.POST )
@@ -46,7 +53,13 @@ public class ActivityRestController {
 
 	@RequestMapping( path = "startFrom/{id}", method = RequestMethod.POST )
 	public ResponseEntity<Activity> duplicateActivity( @PathVariable Long id ) {
-		Activity fromActivity	= this.activityRepository.findOne( id );
+		Optional<Activity> actOptional = this.activityRepository.findOne( id );
+
+		if ( !actOptional.isPresent() ) {
+			return ResponseEntity.noContent().build();
+		}
+
+		Activity fromActivity	= actOptional.get();
 		Activity newActivity	= new Activity( fromActivity.getTitle() );
 
 		newActivity.setActivityType( fromActivity.getActivityType() );
@@ -60,18 +73,31 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( path = "/{id}/stop", method = RequestMethod.POST )
-	public Activity stopActivity( @PathVariable Long id ) {
-		Activity activity	= this.activityRepository.findOne( id );
+	public ResponseEntity<Activity> stopActivity( @PathVariable Long id ) {
+		Optional<Activity> actOptional = this.activityRepository.findOne( id );
+
+		if ( !actOptional.isPresent() ) {
+			return ResponseEntity.noContent().build();
+		}
+
+		Activity activity = actOptional.get();
 		activity.stop();
+		activity = this.activityRepository.save( activity );
 
 		log.info( "Successfully stopped activity." );
 
-		return this.activityRepository.save( activity );
+		return new ResponseEntity<>( activity, HttpStatus.OK );
 	}
 
 	@RequestMapping( path = "/{id}", method = RequestMethod.PATCH )
-	public Activity updateActivity( @PathVariable Long id, @RequestBody Activity input ) {
-		Activity activity = this.activityRepository.findOne( id );
+	public ResponseEntity<Activity>  updateActivity( @PathVariable Long id, @RequestBody Activity input ) {
+		Optional<Activity> actOptional = this.activityRepository.findOne( id );
+
+		if ( !actOptional.isPresent() ) {
+			return ResponseEntity.noContent().build();
+		}
+
+		Activity activity = actOptional.get();
 
 		if ( !activity.getTitle().equals(input.getTitle()) ) {
 			activity.setTitle( input.getTitle() );
@@ -85,7 +111,9 @@ public class ActivityRestController {
 			activity.setActivityTicket( input.getActivityTicket() );
 		}
 
-		return this.activityRepository.save( activity );
+		activity = this.activityRepository.save( activity );
+
+		return new ResponseEntity<>( activity, HttpStatus.OK );
 	}
 
 	@RequestMapping( path = "/{id}", method = RequestMethod.DELETE )
