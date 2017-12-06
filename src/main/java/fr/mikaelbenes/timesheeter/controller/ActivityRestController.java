@@ -86,7 +86,7 @@ public class ActivityRestController {
 
 		log.info( "Successfully stopped activity." );
 
-		return new ResponseEntity<>( activity, HttpStatus.OK );
+		return ResponseEntity.ok( activity );
 	}
 
 	@RequestMapping( path = "/{id}", method = RequestMethod.PATCH )
@@ -98,22 +98,15 @@ public class ActivityRestController {
 		}
 
 		Activity activity = actOptional.get();
-
-		if ( !activity.getTitle().equals(input.getTitle()) ) {
-			activity.setTitle( input.getTitle() );
-		}
-
-		if ( !activity.getActivityType().equals(input.getActivityType()) ) {
-			activity.setActivityType( input.getActivityType() );
-		}
-
-		if ( !activity.getActivityTicket().equals(input.getActivityTicket()) ) {
-			activity.setActivityTicket( input.getActivityTicket() );
-		}
+		activity.setTitle( input.getTitle() );
+		activity.setActivityType( input.getActivityType() );
+		activity.setActivityTicket( input.getActivityTicket() );
 
 		activity = this.activityRepository.save( activity );
 
-		return new ResponseEntity<>( activity, HttpStatus.OK );
+		log.info( "Successfully updated activity #{}.", activity.getId() );
+
+		return ResponseEntity.ok( activity );
 	}
 
 	@RequestMapping( path = "/{id}", method = RequestMethod.DELETE )
