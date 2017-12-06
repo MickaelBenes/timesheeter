@@ -51,7 +51,7 @@ public class ActivityRestController {
 		return new ResponseEntity<>( newActivity, HttpStatus.CREATED );
 	}
 
-	@RequestMapping( path = "startFrom/{id}", method = RequestMethod.POST )
+	@RequestMapping( path = "/{id}/duplicate", method = RequestMethod.POST )
 	public ResponseEntity<Activity> duplicateActivity( @PathVariable Long id ) {
 		Optional<Activity> actOptional = this.activityRepository.findOne( id );
 
@@ -67,7 +67,7 @@ public class ActivityRestController {
 
 		newActivity	= this.activityRepository.save( newActivity );
 
-		log.info( "Successfully created activity from existing activity. ID : {}", newActivity.getId() );
+		log.info( "Successfully duplicated activity #{}. ID : {}", id, newActivity.getId() );
 
 		return new ResponseEntity<>( newActivity, HttpStatus.CREATED );
 	}
