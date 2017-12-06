@@ -6,8 +6,6 @@ import fr.mikaelbenes.timesheeter.data.repository.ActivityRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -36,7 +34,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 public class ActivityRestControllerTest {
 
-	private static final Logger logger				= LoggerFactory.getLogger( ActivityRestController.class );
 	private static final String ENDPOINT_PATH		= "/activities";
 	private static final Activity activityTest1 	= new Activity( "Test 1", "Redmine", "1234" );
 	private static final Activity activityTest2 	= new Activity( "Test 2" );
@@ -61,8 +58,7 @@ public class ActivityRestControllerTest {
 
 	@Autowired
 	void setConverters( HttpMessageConverter<?>[] converters ) {
-		this.mappingJackson2HttpMessageConverter = Arrays.asList( converters )
-				.stream()
+		this.mappingJackson2HttpMessageConverter = Arrays.stream( converters )
 				.filter( hmc -> hmc instanceof MappingJackson2HttpMessageConverter )
 				.findAny()
 				.orElse( null );
@@ -71,20 +67,20 @@ public class ActivityRestControllerTest {
 	}
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		this.mockMvc = webAppContextSetup( webApplicationContext ).build();
 
 		this.activityRepo.deleteAllInBatch();
 		this.activities.clear();
 
 		activityTest3.stop();
-		Activity activityTest1 = this.activityRepo.save( this.activityTest1 );
-		Activity activityTest2 = this.activityRepo.save( this.activityTest2 );
-		Activity activityTest3 = this.activityRepo.save( this.activityTest3 );
+		Activity activityTestN1 = this.activityRepo.save( activityTest1 );
+		Activity activityTestN2 = this.activityRepo.save( activityTest2 );
+		Activity activityTestN3 = this.activityRepo.save( activityTest3 );
 
-		this.activities.add( activityTest1 );
-		this.activities.add( activityTest2 );
-		this.activities.add( activityTest3 );
+		this.activities.add( activityTestN1 );
+		this.activities.add( activityTestN2 );
+		this.activities.add( activityTestN3 );
 	}
 
 	@Test
@@ -134,7 +130,7 @@ public class ActivityRestControllerTest {
 
 	@Test
 	public void createActivity() throws Exception {
-		String activityJson = this.json( this.activityTest4 );
+		String activityJson = this.json( activityTest4 );
 
 		this.mockMvc.perform(
 				post( ENDPOINT_PATH )
@@ -174,7 +170,7 @@ public class ActivityRestControllerTest {
 
 	@Test
 	public void updateActivity() throws Exception {
-		String activityJson = this.json( this.activityTest4 );
+		String activityJson = this.json( activityTest4 );
 
 		this.mockMvc.perform(
 				patch( ENDPOINT_PATH + "/" + this.activities.get(0).getId() )
@@ -184,9 +180,9 @@ public class ActivityRestControllerTest {
 				.andExpect( status().isOk() )
 				.andExpect( content().contentType(this.contentType) )
 				.andExpect( jsonPath("$.id", is(this.activities.get(0).getId().intValue())) )
-				.andExpect( jsonPath("$.title", is(this.activityTest4.getTitle())) )
-				.andExpect( jsonPath("$.activityType", is(this.activityTest4.getActivityType())) )
-				.andExpect( jsonPath("$.activityTicket", is(this.activityTest4.getActivityTicket())) )
+				.andExpect( jsonPath("$.title", is(activityTest4.getTitle())) )
+				.andExpect( jsonPath("$.activityType", is(activityTest4.getActivityType())) )
+				.andExpect( jsonPath("$.activityTicket", is(activityTest4.getActivityTicket())) )
 				.andExpect( jsonPath("$.startTime", notNullValue()) )
 				.andExpect( jsonPath("$.stopTime", nullValue()) )
 				.andExpect( jsonPath("$.duration", isEmptyString()) );
@@ -198,7 +194,7 @@ public class ActivityRestControllerTest {
 				.andExpect( status().isNoContent() );
 	}
 
-	protected String json( Object o ) throws IOException {
+	private String json( Object o ) throws IOException {
 		MockHttpOutputMessage outputMessage = new MockHttpOutputMessage();
 		this.mappingJackson2HttpMessageConverter.write( o, MediaType.APPLICATION_JSON, outputMessage );
 
