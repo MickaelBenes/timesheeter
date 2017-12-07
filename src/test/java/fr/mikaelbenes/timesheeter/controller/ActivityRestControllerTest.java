@@ -194,6 +194,14 @@ public class ActivityRestControllerTest {
 				.andExpect( status().isNoContent() );
 	}
 
+	@Test
+	public void getTotalTimeAsString() throws Exception {
+		this.mockMvc.perform( get(ENDPOINT_PATH + "/totalTime") )
+				.andExpect( status().isOk() )
+//				.andExpect( content().contentType(this.contentType) )
+				.andExpect( jsonPath("$", notNullValue()) );
+	}
+
 	private String json( Object o ) throws IOException {
 		MockHttpOutputMessage outputMessage = new MockHttpOutputMessage();
 		this.mappingJackson2HttpMessageConverter.write( o, MediaType.APPLICATION_JSON, outputMessage );

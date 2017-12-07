@@ -1,5 +1,6 @@
 package fr.mikaelbenes.timesheeter.data.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.mikaelbenes.timesheeter.utils.TimerUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,6 +75,11 @@ public class Activity {
 		}
 
 		return TimerUtils.getDuration( this.startTime, this.stopTime );
+	}
+
+	@JsonIgnore
+	public long getDurationTimestamp() {
+		return TimerUtils.convertToTimestamp( this.stopTime ) - TimerUtils.convertToTimestamp( this.startTime );
 	}
 
 }

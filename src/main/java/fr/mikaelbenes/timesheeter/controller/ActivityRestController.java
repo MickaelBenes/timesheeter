@@ -2,6 +2,7 @@ package fr.mikaelbenes.timesheeter.controller;
 
 import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import fr.mikaelbenes.timesheeter.data.repository.ActivityRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
 @RequestMapping( "/activities" )
 public class ActivityRestController {
 
-	private final static Logger log = LoggerFactory.getLogger( ActivityRestController.class );
+	private final static Logger logger = LoggerFactory.getLogger( ActivityRestController.class );
 
 	private final ActivityRepository activityRepository;
 
@@ -46,7 +48,7 @@ public class ActivityRestController {
 		input.start();
 		Activity newActivity	= this.activityRepository.save( input );
 
-		log.info( "Successfully created activity. ID : {}", newActivity.getId() );
+		logger.info( "Successfully created activity. ID : {}", newActivity.getId() );
 
 		return new ResponseEntity<>( newActivity, HttpStatus.CREATED );
 	}
@@ -67,7 +69,7 @@ public class ActivityRestController {
 
 		newActivity	= this.activityRepository.save( newActivity );
 
-		log.info( "Successfully duplicated activity #{}. ID : {}", id, newActivity.getId() );
+		logger.info( "Successfully duplicated activity #{}. ID : {}", id, newActivity.getId() );
 
 		return new ResponseEntity<>( newActivity, HttpStatus.CREATED );
 	}
@@ -84,7 +86,7 @@ public class ActivityRestController {
 		activity.stop();
 		activity = this.activityRepository.save( activity );
 
-		log.info( "Successfully stopped activity." );
+		logger.info( "Successfully stopped activity." );
 
 		return ResponseEntity.ok( activity );
 	}
@@ -104,7 +106,7 @@ public class ActivityRestController {
 
 		activity = this.activityRepository.save( activity );
 
-		log.info( "Successfully updated activity #{}.", activity.getId() );
+		logger.info( "Successfully updated activity #{}.", activity.getId() );
 
 		return ResponseEntity.ok( activity );
 	}
@@ -113,9 +115,41 @@ public class ActivityRestController {
 	public ResponseEntity<?> deleteActivity( @PathVariable Long id ) {
 		this.activityRepository.delete( id );
 
-		log.info( "Successfully deleted activity." );
+		logger.info( "Successfully deleted activity." );
 
 		return ResponseEntity.noContent().build();
+	}
+
+	@RequestMapping( path = "/totalTime", method = RequestMethod.GET, produces = "application/json; charset=UTF-8" )
+	public ResponseEntity<String> getTotalTimeAsString() {
+		long totalTime	= this.activityRepository.findAll()
+				.stream()
+				.filter( activity -> !Objects.isNull(activity.getStopTime()) )
+				.mapToLong( Activity::getDurationTimestamp )
+				.sum();
+
+		if ( totalTime == 0 ) {
+			return ResponseEntity.noContent().build();
+		}
+
+		long seconds	= totalTime / 1000;
+		long minutes	= seconds / 60;
+		long hours		= minutes / 60;
+
+		String secondsStr	= Long.toString(seconds % 60);
+		String minutesStr	= Long.toString(minutes % 60);
+		String hoursStr		= Long.toString(hours % 60);
+		String totalTimeStr	= StringUtils.leftPad(hoursStr, 2, '0') + ":"
+				+ StringUtils.leftPad(minutesStr, 2, '0') + ":"
+				+ StringUtils.leftPad(secondsStr, 2, '0');
+
+		StringBuilder jsonResponse	= new StringBuilder();
+		jsonResponse.append( '{' );
+		jsonResponse.append( "\"totalTime\":");
+		jsonResponse.append( "\"" + totalTimeStr + "\"");
+		jsonResponse.append( '}' );
+
+		return ResponseEntity.ok( jsonResponse.toString() );
 	}
 
 }

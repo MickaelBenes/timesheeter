@@ -1,9 +1,12 @@
 package fr.mikaelbenes.timesheeter;
 
+import fr.mikaelbenes.timesheeter.data.domain.Activity;
+import fr.mikaelbenes.timesheeter.data.repository.ActivityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -22,6 +25,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class TimesheeterApplication {
@@ -96,6 +101,20 @@ public class TimesheeterApplication {
 				.csrf().disable();
 		}
 
+	}
+
+	@Bean
+	CommandLineRunner init(ActivityRepository repoActivity) {
+		return evt -> {
+			Activity activityInit	= new Activity("Activity init.", "Redmine", "0");
+			LocalDateTime stopTime	= LocalDateTime.parse(activityInit.getStartTime().toString())
+					.plusSeconds(34)
+					.plusMinutes(13)
+					.plusHours(2);
+			activityInit.setStopTime(stopTime);
+
+			repoActivity.save(activityInit);
+		};
 	}
 
 }

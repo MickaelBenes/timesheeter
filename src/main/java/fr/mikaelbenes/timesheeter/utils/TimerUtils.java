@@ -1,5 +1,6 @@
 package fr.mikaelbenes.timesheeter.utils;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -21,6 +22,7 @@ public class TimerUtils {
 			return "";
 		}
 
+		// TODO use convertToTimeStamp() instead
 		ZonedDateTime startZdt	= startDateTime.atZone( ZONE_ID_PARIS );
 		ZonedDateTime stopZdt	= stopDateTime.atZone( ZONE_ID_PARIS );
 
@@ -29,6 +31,10 @@ public class TimerUtils {
 		long duration	= ( stopTime - startTime ) / 1000;
 
 		return LocalTime.ofSecondOfDay( duration ).toString();
+	}
+
+	public static long convertToTimestamp( LocalDateTime localDateTime ) {
+		return Timestamp.valueOf( localDateTime ).getTime();
 	}
 
 }
