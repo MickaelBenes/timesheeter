@@ -50,6 +50,8 @@ public class ActivityRestControllerTest {
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
 	private List<Activity> activities = new ArrayList<>();
 
+	private String activityTest3Duration;
+
 	@Autowired
 	private ActivityRepository activityRepo;
 
@@ -72,8 +74,8 @@ public class ActivityRestControllerTest {
 
 		this.activityRepo.deleteAllInBatch();
 		this.activities.clear();
-
 		activityTest3.stop();
+
 		Activity activityTestN1 = this.activityRepo.save( activityTest1 );
 		Activity activityTestN2 = this.activityRepo.save( activityTest2 );
 		Activity activityTestN3 = this.activityRepo.save( activityTest3 );
@@ -81,6 +83,8 @@ public class ActivityRestControllerTest {
 		this.activities.add( activityTestN1 );
 		this.activities.add( activityTestN2 );
 		this.activities.add( activityTestN3 );
+
+		this.activityTest3Duration = activityTestN3.getDuration();
 	}
 
 	@Test
@@ -198,8 +202,8 @@ public class ActivityRestControllerTest {
 	public void getTotalTimeAsString() throws Exception {
 		this.mockMvc.perform( get(ENDPOINT_PATH + "/totalTime") )
 				.andExpect( status().isOk() )
-//				.andExpect( content().contentType(this.contentType) )
-				.andExpect( jsonPath("$", notNullValue()) );
+				.andExpect( content().contentType(this.contentType) )
+				.andExpect( jsonPath("$.totalTime", is(this.activityTest3Duration)) ); // because this is the only stopped activity
 	}
 
 	private String json( Object o ) throws IOException {
