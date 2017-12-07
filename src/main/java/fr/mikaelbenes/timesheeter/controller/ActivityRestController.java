@@ -132,7 +132,7 @@ public class ActivityRestController {
 			return ResponseEntity.noContent().build();
 		}
 
-		long seconds	= totalTime / 1000;
+		long seconds	= Math.round( totalTime / 1000 );
 		long minutes	= seconds / 60;
 		long hours		= minutes / 60;
 
@@ -143,13 +143,11 @@ public class ActivityRestController {
 				+ StringUtils.leftPad(minutesStr, 2, '0') + ":"
 				+ StringUtils.leftPad(secondsStr, 2, '0');
 
-		StringBuilder jsonResponse	= new StringBuilder();
-		jsonResponse.append( '{' );
-		jsonResponse.append( "\"totalTime\":");
-		jsonResponse.append( "\"" + totalTimeStr + "\"");
-		jsonResponse.append( '}' );
+		String jsonResponse = "{" +
+				"\"totalTime\": \"" + totalTimeStr + "\"" +
+			"}";
 
-		return ResponseEntity.ok( jsonResponse.toString() );
+		return ResponseEntity.ok( jsonResponse );
 	}
 
 }
