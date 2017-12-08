@@ -3,12 +3,14 @@ package fr.mikaelbenes.timesheeter.utils;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 public class TimerUtils {
 
-	private static final ZoneId ZONE_ID_PARIS = ZoneId.of( ZoneId.SHORT_IDS.get("ECT") );
+	/**
+	 * Private constructor to hide the public one.<br>
+	 * SonarLint said...
+	 */
+	private TimerUtils() {}
 
 	/**
 	 * Gives the time duration from two given dates of the same day.
@@ -22,13 +24,9 @@ public class TimerUtils {
 			return "";
 		}
 
-		// TODO use convertToTimeStamp() instead
-		ZonedDateTime startZdt	= startDateTime.atZone( ZONE_ID_PARIS );
-		ZonedDateTime stopZdt	= stopDateTime.atZone( ZONE_ID_PARIS );
-
-		long startTime	= startZdt.toInstant().toEpochMilli();
-		long stopTime	= stopZdt.toInstant().toEpochMilli();
-		long duration	= ( stopTime - startTime ) / 1000;
+		long startTime	= convertToTimestamp(startDateTime);
+		long stopTime	= convertToTimestamp(stopDateTime);
+		long duration	= Math.round((float) (stopTime - startTime) / 1000);
 
 		return LocalTime.ofSecondOfDay( duration ).toString();
 	}
