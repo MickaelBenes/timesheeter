@@ -205,6 +205,14 @@ public class ActivityRestControllerTest {
 				.andExpect( jsonPath("$.totalTime", is(activityTest1.getDuration())) ); // because this is the only stopped activity
 	}
 
+	@Test
+	public void search() throws Exception {
+		this.mockMvc.perform(get(ENDPOINT_PATH + "/search/1234"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(this.contentType))
+				.andExpect(jsonPath("$", hasSize(2)));
+	}
+
 	@SuppressWarnings("unchecked")
 	private String json( Object o ) throws IOException {
 		MockHttpOutputMessage outputMessage = new MockHttpOutputMessage();
