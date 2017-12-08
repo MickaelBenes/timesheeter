@@ -28,8 +28,10 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( method = RequestMethod.GET )
-	public List<Activity> getActivities() {
-		return this.activityRepository.findAll();
+	public ResponseEntity<List<Activity>> getActivities() {
+		List<Activity> activities = this.activityRepository.findAll();
+
+		return new ResponseEntity<>(activities, HttpStatus.FOUND);
 	}
 
 	@RequestMapping( method = RequestMethod.GET, value = "/{id}" )
