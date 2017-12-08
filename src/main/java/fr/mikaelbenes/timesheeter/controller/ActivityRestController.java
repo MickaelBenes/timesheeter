@@ -31,7 +31,7 @@ public class ActivityRestController {
 	public ResponseEntity<List<Activity>> getActivities() {
 		List<Activity> activities = this.activityRepository.findAll();
 
-		return new ResponseEntity<>(activities, HttpStatus.FOUND);
+		return ResponseEntity.ok(activities);
 	}
 
 	@RequestMapping( method = RequestMethod.GET, value = "/{id}" )
@@ -39,7 +39,7 @@ public class ActivityRestController {
 		Optional<Activity> actOptional = this.activityRepository.findOne( id );
 
 		if ( actOptional.isPresent() ) {
-			return new ResponseEntity<>( actOptional.get(), HttpStatus.FOUND );
+			return ResponseEntity.ok(actOptional.get());
 		}
 
 		return ResponseEntity.noContent().build();
@@ -156,7 +156,7 @@ public class ActivityRestController {
 	public ResponseEntity<List<Activity>> search(@PathVariable String searchTerms) {
 		List<Activity> activities = this.activityRepository.findBySearchTerms(searchTerms);
 
-		return new ResponseEntity<>(activities, HttpStatus.FOUND);
+		return ResponseEntity.ok(activities);
 	}
 
 }
