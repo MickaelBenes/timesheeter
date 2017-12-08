@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequestMapping( "/activities" )
 public class ActivityRestController {
 
-	private final static Logger logger = LoggerFactory.getLogger( ActivityRestController.class );
+	private static final Logger logger = LoggerFactory.getLogger( ActivityRestController.class );
 
 	private final ActivityRepository activityRepository;
 
@@ -112,7 +112,7 @@ public class ActivityRestController {
 	}
 
 	@RequestMapping( path = "/{id}", method = RequestMethod.DELETE )
-	public ResponseEntity<?> deleteActivity( @PathVariable Long id ) {
+	public ResponseEntity deleteActivity( @PathVariable Long id ) {
 		this.activityRepository.delete( id );
 
 		logger.info( "Successfully deleted activity." );
@@ -132,7 +132,7 @@ public class ActivityRestController {
 			return ResponseEntity.noContent().build();
 		}
 
-		long seconds	= Math.round( totalTime / 1000 );
+		long seconds	= Math.round( (float) totalTime / 1000 );
 		long minutes	= seconds / 60;
 		long hours		= minutes / 60;
 
