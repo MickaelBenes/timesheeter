@@ -142,7 +142,7 @@ public class ActivityRestControllerTest {
 
 	@Test
 	public void duplicateActivity() throws Exception {
-		this.mockMvc.perform( post(ENDPOINT_PATH + "/startFrom/" + this.activities.get(0).getId()) )
+		this.mockMvc.perform( post(ENDPOINT_PATH + "/" +  this.activities.get(0).getId() + "/duplicate") )
 				.andExpect( status().isCreated() )
 				.andExpect( content().contentType(this.contentType) )
 				.andExpect( jsonPath("$.id", notNullValue()) )
