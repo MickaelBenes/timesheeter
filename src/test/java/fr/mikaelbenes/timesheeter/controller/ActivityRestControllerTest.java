@@ -34,11 +34,11 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 public class ActivityRestControllerTest {
 
-	private static final String ENDPOINT_PATH		= "/activities";
-	private static final Activity activityTest1 	= new Activity( "Test 1", "Redmine", "1234" );
-	private static final Activity activityTest2 	= new Activity( "Test 2" );
-	private static final Activity activityTest3		= new Activity( "Test 3", "Redmine", "12345" );
-	private static final Activity activityTest4		= new Activity( "Test 4", "Redmine", "123" );
+	private static final String ENDPOINT_PATH	= "/activities";
+	private static final Activity activityTest1 = new Activity( "Test 1", "Redmine", "1234" );
+	private static final Activity activityTest2 = new Activity( "Test 2" );
+	private static final Activity activityTest3	= new Activity( "Test 3", "Redmine", "12345" );
+	private static final Activity activityTest4	= new Activity( "Test 4", "Redmine", "123" );
 
 	private MediaType contentType = new MediaType(
 			MediaType.APPLICATION_JSON.getType(),
@@ -49,8 +49,6 @@ public class ActivityRestControllerTest {
 	private MockMvc mockMvc;
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
 	private List<Activity> activities = new ArrayList<>();
-
-	private String activityTest3Duration;
 
 	@Autowired
 	private ActivityRepository activityRepo;
@@ -83,8 +81,6 @@ public class ActivityRestControllerTest {
 		this.activities.add( activityTestN1 );
 		this.activities.add( activityTestN2 );
 		this.activities.add( activityTestN3 );
-
-		this.activityTest3Duration = activityTestN3.getDuration();
 	}
 
 	@Test
@@ -200,12 +196,16 @@ public class ActivityRestControllerTest {
 
 	@Test
 	public void getTotalTimeAsString() throws Exception {
+		Activity activityTest1 = this.activities.get(1);
+		activityTest1.stop();
+
 		this.mockMvc.perform( get(ENDPOINT_PATH + "/totalTime") )
 				.andExpect( status().isOk() )
 				.andExpect( content().contentType(this.contentType) )
-				.andExpect( jsonPath("$.totalTime", is(this.activityTest3Duration)) ); // because this is the only stopped activity
+				.andExpect( jsonPath("$.totalTime", is(activityTest1.getDuration())) ); // because this is the only stopped activity
 	}
 
+	@SuppressWarnings("unchecked")
 	private String json( Object o ) throws IOException {
 		MockHttpOutputMessage outputMessage = new MockHttpOutputMessage();
 		this.mappingJackson2HttpMessageConverter.write( o, MediaType.APPLICATION_JSON, outputMessage );
