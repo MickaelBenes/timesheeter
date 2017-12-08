@@ -115,7 +115,7 @@ public class ActivityRestController {
 	public ResponseEntity deleteActivity( @PathVariable Long id ) {
 		this.activityRepository.delete( id );
 
-		logger.info( "Successfully deleted activity." );
+		logger.info( "Successfully deleted activity #{}.", id );
 
 		return ResponseEntity.noContent().build();
 	}
