@@ -152,7 +152,7 @@ public class ActivityRestController {
 		return ResponseEntity.ok( jsonResponse );
 	}
 
-	@RequestMapping(params = "/search/{searchTerms}", method = RequestMethod.GET)
+	@RequestMapping(path = "/search/{searchTerms}", method = RequestMethod.GET)
 	public ResponseEntity<List<Activity>> search(@PathVariable String searchTerms) {
 		List<Activity> activities = this.activityRepository.findBySearchTerms(searchTerms);
 
