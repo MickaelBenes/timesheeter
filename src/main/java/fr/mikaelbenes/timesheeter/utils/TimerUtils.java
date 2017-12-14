@@ -40,6 +40,12 @@ public class TimerUtils {
 		return Timestamp.valueOf( localDateTime ).getTime();
 	}
 
+	/**
+	 * Calculates the sum of all working times in a given list of activity.
+	 *
+	 * @param	activities	the activities list
+	 * @return	a timestamp of the total working time
+	 */
 	public static long calculateWorkingTime(List<Activity> activities) {
 		return activities.stream()
 				.filter(activity -> !Objects.isNull(activity.getStopTime()))
@@ -47,6 +53,12 @@ public class TimerUtils {
 				.sum();
 	}
 
+	/**
+	 * Converts a timestamp into a human readable time string.
+	 *
+	 * @param	timestamp	the timestamp to convert
+	 * @return	a human readable time string
+	 */
 	public static String humanizeTimestamp(long timestamp) {
 		long seconds	= Math.round( (float) timestamp / 1000 );
 		long minutes	= seconds / 60;

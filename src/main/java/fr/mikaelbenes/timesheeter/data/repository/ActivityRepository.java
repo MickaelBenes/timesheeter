@@ -4,7 +4,6 @@ import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
