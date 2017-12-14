@@ -2,6 +2,7 @@ package fr.mikaelbenes.timesheeter.controller;
 
 import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import fr.mikaelbenes.timesheeter.data.repository.ActivityRepository;
+import fr.mikaelbenes.timesheeter.utils.TimerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping( "/activities" )
@@ -147,6 +149,36 @@ public class ActivityRestController {
 
 		String jsonResponse = "{" +
 				"\"totalTime\": \"" + totalTimeStr + "\"" +
+			"}";
+
+		return ResponseEntity.ok( jsonResponse );
+	}
+
+	@RequestMapping(path = "/workingTime", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public ResponseEntity<String> getWorkingTime() {
+		long totalTime	= TimerUtils.calculateWorkingTime(this.activityRepository.findAll());
+
+		if ( totalTime == 0 ) {
+			return ResponseEntity.noContent().build();
+		}
+
+		String jsonResponse = "{" +
+				"\"totalTime\": \"" + TimerUtils.humanizeTimestamp(totalTime) + "\"" +
+			"}";
+
+		return ResponseEntity.ok( jsonResponse );
+	}
+
+	@RequestMapping(path = "/workingTime", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public ResponseEntity<String> getWorkingTime(@RequestBody Set<Long> ids) {
+		long totalTime	= TimerUtils.calculateWorkingTime(this.activityRepository.findAllByIds(ids));
+
+		if ( totalTime == 0 ) {
+			return ResponseEntity.noContent().build();
+		}
+
+		String jsonResponse = "{" +
+				"\"totalTime\": \"" + TimerUtils.humanizeTimestamp(totalTime) + "\"" +
 			"}";
 
 		return ResponseEntity.ok( jsonResponse );

@@ -1,8 +1,13 @@
 package fr.mikaelbenes.timesheeter.utils;
 
+import fr.mikaelbenes.timesheeter.data.domain.Activity;
+import org.apache.commons.lang3.StringUtils;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Objects;
 
 public class TimerUtils {
 
@@ -33,6 +38,27 @@ public class TimerUtils {
 
 	public static long convertToTimestamp( LocalDateTime localDateTime ) {
 		return Timestamp.valueOf( localDateTime ).getTime();
+	}
+
+	public static long calculateWorkingTime(List<Activity> activities) {
+		return activities.stream()
+				.filter(activity -> !Objects.isNull(activity.getStopTime()))
+				.mapToLong(Activity::getDurationTimestamp)
+				.sum();
+	}
+
+	public static String humanizeTimestamp(long timestamp) {
+		long seconds	= Math.round( (float) timestamp / 1000 );
+		long minutes	= seconds / 60;
+		long hours		= minutes / 60;
+
+		String secondsStr	= Long.toString(seconds % 60);
+		String minutesStr	= Long.toString(minutes % 60);
+		String hoursStr		= Long.toString(hours % 60);
+
+		return StringUtils.leftPad(hoursStr, 2, '0') + ":"
+				+ StringUtils.leftPad(minutesStr, 2, '0') + ":"
+				+ StringUtils.leftPad(secondsStr, 2, '0');
 	}
 
 }

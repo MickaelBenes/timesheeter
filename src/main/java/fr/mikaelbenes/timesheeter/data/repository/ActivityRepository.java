@@ -6,10 +6,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface ActivityRepository extends BaseRepository<Activity, Long> {
 
-	Collection<Activity> findByActivityTicket( String activityTicket );
+	List<Activity> findByActivityTicket(String activityTicket);
 
 	@Query(
 		"SELECT a FROM Activity a " +
@@ -17,5 +18,8 @@ public interface ActivityRepository extends BaseRepository<Activity, Long> {
 		"OR a.activityTicket = :searchTerms"
 	)
 	List<Activity> findBySearchTerms(@Param("searchTerms") String searchTerms);
+
+	@Query("SELECT a FROM Activity a WHERE a.id IN :ids")
+	List<Activity> findAllByIds(@Param("ids") Set<Long> ids);
 
 }
