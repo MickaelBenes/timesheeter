@@ -124,36 +124,6 @@ public class ActivityRestController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@RequestMapping( path = "/totalTime", method = RequestMethod.GET, produces = "application/json; charset=UTF-8" )
-	public ResponseEntity<String> getTotalTimeAsString() {
-		long totalTime	= this.activityRepository.findAll()
-				.stream()
-				.filter( activity -> !Objects.isNull(activity.getStopTime()) )
-				.mapToLong( Activity::getDurationTimestamp )
-				.sum();
-
-		if ( totalTime == 0 ) {
-			return ResponseEntity.noContent().build();
-		}
-
-		long seconds	= Math.round( (float) totalTime / 1000 );
-		long minutes	= seconds / 60;
-		long hours		= minutes / 60;
-
-		String secondsStr	= Long.toString(seconds % 60);
-		String minutesStr	= Long.toString(minutes % 60);
-		String hoursStr		= Long.toString(hours % 60);
-		String totalTimeStr	= StringUtils.leftPad(hoursStr, 2, '0') + ":"
-				+ StringUtils.leftPad(minutesStr, 2, '0') + ":"
-				+ StringUtils.leftPad(secondsStr, 2, '0');
-
-		String jsonResponse = "{" +
-				"\"totalTime\": \"" + totalTimeStr + "\"" +
-			"}";
-
-		return ResponseEntity.ok( jsonResponse );
-	}
-
 	@RequestMapping(path = "/workingTime", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public ResponseEntity<String> getWorkingTime() {
 		long totalTime	= TimerUtils.calculateWorkingTime(this.activityRepository.findAll());
