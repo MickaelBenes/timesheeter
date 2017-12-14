@@ -14,7 +14,7 @@ public interface ActivityRepository extends BaseRepository<Activity, Long> {
 	@Query(
 		"SELECT a FROM Activity a " +
 		"WHERE LOWER(a.title) LIKE LOWER(CONCAT('%',:searchTerms, '%')) " +
-		"OR a.activityTicket LIKE CONCAT('%',:searchTerms, '%')"
+		"OR a.activityTicket = :searchTerms"
 	)
 	List<Activity> findBySearchTerms(@Param("searchTerms") String searchTerms);
 
