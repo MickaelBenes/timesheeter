@@ -18,7 +18,6 @@ public interface ActivityRepository extends BaseRepository<Activity, Long> {
 	)
 	List<Activity> findBySearchTerms(@Param("searchTerms") String searchTerms);
 
-	@Query("SELECT a FROM Activity a WHERE a.id IN :ids")
-	List<Activity> findAllByIds(@Param("ids") Set<Long> ids);
+	List<Activity> findByIdIsIn(@Param("ids") Set<Long> ids);
 
 }

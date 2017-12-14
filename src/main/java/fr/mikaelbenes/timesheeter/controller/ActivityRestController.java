@@ -141,7 +141,7 @@ public class ActivityRestController {
 
 	@RequestMapping(path = "/workingTime", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public ResponseEntity<String> getWorkingTime(@RequestBody Set<Long> ids) {
-		long totalTime	= TimerUtils.calculateWorkingTime(this.activityRepository.findAllByIds(ids));
+		long totalTime	= TimerUtils.calculateWorkingTime(this.activityRepository.findByIdIsIn(ids));
 
 		if ( totalTime == 0 ) {
 			return ResponseEntity.noContent().build();
