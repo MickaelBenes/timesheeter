@@ -227,7 +227,6 @@ public class ActivityRestControllerTest {
 				.contentType(this.contentType)
 				.content(idsJson)
 			)
-				.andDo(System.out::println)
 				.andExpect( status().isOk() )
 				.andExpect( content().contentType(this.contentType) )
 				.andExpect( jsonPath("$.totalTime", is(humanWorkingTime)) );
@@ -238,7 +237,7 @@ public class ActivityRestControllerTest {
 		this.mockMvc.perform(get(ENDPOINT_PATH + "/search/1234"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(this.contentType))
-				.andExpect(jsonPath("$", hasSize(2)));
+				.andExpect(jsonPath("$", hasSize(1)));
 	}
 
 	@SuppressWarnings("unchecked")
