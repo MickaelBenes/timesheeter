@@ -3,6 +3,7 @@ package fr.mikaelbenes.timesheeter.controller;
 import fr.mikaelbenes.timesheeter.TimesheeterApplication;
 import fr.mikaelbenes.timesheeter.data.domain.Activity;
 import fr.mikaelbenes.timesheeter.data.repository.ActivityRepository;
+import fr.mikaelbenes.timesheeter.utils.TimerUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,13 +16,13 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
@@ -195,14 +196,41 @@ public class ActivityRestControllerTest {
 	}
 
 	@Test
-	public void getTotalTimeAsString() throws Exception {
+	public void getWorkingTime() throws Exception {
 		Activity activityTest1 = this.activities.get(1);
 		activityTest1.stop();
 
-		this.mockMvc.perform( get(ENDPOINT_PATH + "/totalTime") )
+		this.mockMvc.perform( get(ENDPOINT_PATH + "/workingTime") )
 				.andExpect( status().isOk() )
 				.andExpect( content().contentType(this.contentType) )
 				.andExpect( jsonPath("$.totalTime", is(activityTest1.getDuration())) ); // because this is the only stopped activity
+	}
+
+	@Test
+	public void getWorkingTimeWithBody() throws Exception {
+		this.activities.get(1).stop();
+
+		Activity activity1 = this.activityRepo.save(this.activities.get(1));
+		this.activities.remove(1);
+		this.activities.add(1, activity1);
+
+		Set<Long> ids = this.activities
+				.stream()
+				.map(Activity::getId)
+				.collect(Collectors.toSet());
+
+		String idsJson			= this.json(ids);
+		Long workingTime		= TimerUtils.calculateWorkingTime(this.activities);
+		String humanWorkingTime	= TimerUtils.humanizeTimestamp(workingTime);
+
+		this.mockMvc.perform(post(ENDPOINT_PATH + "/workingTime")
+				.contentType(this.contentType)
+				.content(idsJson)
+			)
+				.andDo(System.out::println)
+				.andExpect( status().isOk() )
+				.andExpect( content().contentType(this.contentType) )
+				.andExpect( jsonPath("$.totalTime", is(humanWorkingTime)) );
 	}
 
 	@Test
