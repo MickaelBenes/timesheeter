@@ -103,7 +103,6 @@ public class TimesheeterApplication {
 
 	}
 
-	@Bean
 	CommandLineRunner init(ActivityRepository repoActivity) {
 		return evt -> {
 			Activity activityInit	= new Activity("Activity init.", "Redmine", "0");
