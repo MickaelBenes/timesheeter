@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,9 +30,15 @@ public class ActivityRestController {
 		this.activityRepository = activityRepository;
 	}
 
-	@RequestMapping( method = RequestMethod.GET )
-	public ResponseEntity<List<Activity>> getActivities() {
-		List<Activity> activities = this.activityRepository.findAll();
+	@RequestMapping(method = RequestMethod.GET, value = "/date/{dayTimestamp}")
+	public ResponseEntity<List<Activity>> getActivitiesOfDay(@PathVariable long dayTimestamp) {
+		LocalDateTime dayBegin		= LocalDateTime.ofInstant(Instant.ofEpochSecond(dayTimestamp), ZoneId.systemDefault());
+		LocalDateTime dayEnd		= dayBegin.plusDays(1);
+		List<Activity> activities	= this.activityRepository.findByStartTimeIsBetween(dayBegin, dayEnd);
+
+		logger.info("dayBegin: {}", dayBegin);
+		logger.info("dayEnd: {}", dayEnd);
+		logger.info("activities: {}", activities);
 
 		return ResponseEntity.ok(activities);
 	}
